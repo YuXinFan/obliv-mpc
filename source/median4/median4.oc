@@ -1,0 +1,32 @@
+#include<obliv.oh>
+#include"median4.h"
+
+void median4(void* args)
+{
+  protocolIO *io=args;
+  obliv int a1, a2, b1, b2;
+  obliv int x1, x2;
+  obliv int median;
+  
+  a1 = feedOblivInt(io->smaller, 1);
+  a2 = feedOblivInt(io->larger, 1);
+  b1 = feedOblivInt(io->smaller, 2);
+  b2 = feedOblivInt(io->larger, 2);
+  obliv if ( a1 < b1 ) {
+      x1 = b1;
+  } else  {
+      x1 = a1;
+  }
+  obliv if ( a2 < b2) {
+      x2 = a2;
+  } else {
+      x2 = b2;
+  }
+
+  obliv if ( x1 < x2 ) {
+      median = x1;
+  } else {
+      median = x2;
+  }
+  revealOblivInt(&(io->median), median, 0);
+}
