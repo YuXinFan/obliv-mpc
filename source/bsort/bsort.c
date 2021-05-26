@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <obliv.h>
 
-#include "qsort.h"
+#include "bsort.h"
 
 int main(int argc, char** argv){
 
@@ -47,7 +47,7 @@ int main(int argc, char** argv){
       return 2;
     }
   }
-  fprintf(stderr, "Execute Yao ...\n");
+  fprintf(stderr, "Exec Yao");
   io.input = v;
 
   vector r;
@@ -57,7 +57,7 @@ int main(int argc, char** argv){
   
   struct timeval start,end;  
   gettimeofday(&start, NULL);  
-  execYaoProtocol(&pd, mpcQsort, &io);
+  execYaoProtocol(&pd, bsort, &io);
   gettimeofday(&end, NULL);  
 
   printf("time=%d ms\n",((end.tv_sec-start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec))/1000);  
