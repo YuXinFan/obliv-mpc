@@ -1,0 +1,44 @@
+#include <obliv.oh>
+#include "bubbleSort.h"
+
+// void revealOblivIntArr(int* dest,size_t n,obliv int* src,int destParty)
+// {
+//   size_t i,p=ocCurrentParty();
+//   for(i=0;i<n;++i) revealOblivInt(dest+i,src[i],destParty);
+// }
+
+void swapInt(obliv int* a,obliv int* b) 
+{
+  obliv int t = 0;
+  t=*a^*b;
+  *a^=t;
+  *b^=t;
+}
+
+void bubbleSort(void* args)
+{
+  protocolIO *io = args;
+  int v1Size = ocBroadcastInt(io->input.size, 1);
+  int v2Size = ocBroadcastInt(io->input.size, 2);
+
+  obliv int* arr = malloc(sizeof(obliv int)*(v1Size+v2Size));
+
+  int tSize = v1Size + v2Size;
+  feedOblivIntArray(arr, io->input.arr, v1Size, 1);
+  feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
+
+	for (int i=0; i<tSize-1; i++){ 
+		for (int j=0; j<tSize-1-i; j++) { 
+      obliv bool gt = arr[j] > arr[j+1];
+      bool gtR;
+      revealOblivBool(&gtR, gt, 0);
+			if (gtR){ 
+        swapInt(&arr[j], &arr[j+1]);
+			}
+    }
+  }
+
+  revealOblivIntArray(io->output.arr, arr, v1Size, 1);
+  revealOblivIntArray(io->output.arr, arr+v1Size, v2Size, 2);
+  fprintf(stderr,"YaoGateCount: %u\n",yaoGateCount());
+}

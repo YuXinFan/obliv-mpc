@@ -1,0 +1,62 @@
+#include <obliv.oh>
+#include "qsort.h"
+
+// void revealOblivIntArr(int* dest,size_t n,obliv int* src,int destParty)
+// {
+//   size_t i,p=ocCurrentParty();
+//   for(i=0;i<n;++i) revealOblivInt(dest+i,src[i],destParty);
+// }
+
+void swapInt(obliv int* a,obliv int* b) obliv
+{
+  obliv int t = 0;
+  t=*a^*b;
+  *a^=t;
+  *b^=t;
+}
+
+int partition(obliv int* arr, int n){
+  int i = -1;
+  for (int j = 0; j < n-1; j++){
+    obliv bool leq = (arr[j] <= arr[n-1]);
+    // can't do it.
+    i = i + 1*leq;
+    obliv if (leq) {
+      swapInt(&arr[i], &arr[j]);
+    }
+  }
+  int p = i + 1;
+  swapInt(&arr[p], &arr[n-1]);
+  // p is the index of pivot
+  return p;
+}
+
+void qsortMain(obliv int* arr, int n){
+  if (1 < n) {
+    // p is the index of pivot
+    int p = partition(arr, n);
+    // sort first p value
+    qsortMain(arr, p);
+    // sort last n-p-1 value
+    qsortMain(arr+p+1, n-p-1);
+  }
+}
+
+void mpcQsort(void* args)
+{
+  protocolIO *io = args;
+  int v1Size = ocBroadcastInt(io->input.size, 1);
+  int v2Size = ocBroadcastInt(io->input.size, 2);
+
+  obliv int* arr = malloc(sizeof(obliv int)*(v1Size+v2Size));
+
+  int vMinSize = v1Size<v2Size?v1Size:v2Size;
+  feedOblivIntArray(arr, io->input.arr, v1Size, 1);
+  feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
+
+  qsortMain(arr, v1Size+v2Size);
+
+  revealOblivIntArray(io->output.arr, arr, v1Size, 1);
+  revealOblivIntArray(io->output.arr, arr+v1Size, v2Size, 2);
+  fprintf(stderr,"YaoGateCount: %u\n",yaoGateCount());
+}
