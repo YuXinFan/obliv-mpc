@@ -1,6 +1,8 @@
 #include <obliv.oh>
+#include<bcrandom.h>
 #include "qsort.h"
-
+#include<waksman.h>
+#include<../common/util.h>
 // void revealOblivIntArr(int* dest,size_t n,obliv int* src,int destParty)
 // {
 //   size_t i,p=ocCurrentParty();
@@ -13,6 +15,35 @@ void swapInt(obliv int* a,obliv int* b) obliv
   t=*a^*b;
   *a^=t;
   *b^=t;
+}
+
+void randomShuffleControl(obliv bool* doSwap,size_t n,int party)
+{
+  size_t sc = waksmanSwapCount(n);
+  if(ocCurrentParty()==party)
+  { BCipherRandomGen *gen=newBCipherRandomGen();
+    unsigned *perm=malloc(sizeof(unsigned)*n);
+    bcRandomPermutation(gen,perm,n);
+    bool *c=malloc(sizeof(bool)*sc);
+    waksmanSwitches(perm,n,c);
+    free(perm);
+    releaseBCipherRandomGen(gen);
+    feedOblivBoolArray(doSwap,c,sc,party);
+    free(c);
+  }else feedOblivBoolArray(doSwap,NULL,sc,party); // both parties do this
+}
+
+void party1Shuffle(obliv int* arr,size_t n)
+{
+  size_t sc = waksmanSwapCount(n);
+  unsigned *a=malloc(sizeof(unsigned)*sc),*b=malloc(sizeof(unsigned)*sc);
+  bool *c;
+  unsigned i;
+  obliv bool *oc=calloc(sc,sizeof(obliv bool));
+  randomShuffleControl(oc,n,1);
+  waksmanNetwork(a,b,n);
+  for(i=0;i<sc;++i) obliv if(oc[i]) swapInt(arr+a[i],arr+b[i]);
+  free(a); free(b); free(oc);
 }
 
 int partition(obliv int* arr, int n){
@@ -53,6 +84,7 @@ void mpcQsort(void* args)
   int vMinSize = v1Size<v2Size?v1Size:v2Size;
   feedOblivIntArray(arr, io->input.arr, v1Size, 1);
   feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
+
 
   qsortMain(arr, v1Size+v2Size);
 

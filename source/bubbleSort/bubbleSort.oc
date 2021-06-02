@@ -1,6 +1,12 @@
 #include <obliv.oh>
 #include "bubbleSort.h"
-
+#include <time.h>
+double wallClock()
+{
+  struct timespec t;
+  clock_gettime(CLOCK_REALTIME,&t);
+  return t.tv_sec+1e-9*t.tv_nsec;
+}
 // void revealOblivIntArr(int* dest,size_t n,obliv int* src,int destParty)
 // {
 //   size_t i,p=ocCurrentParty();
@@ -26,7 +32,8 @@ void bubbleSort(void* args)
   int tSize = v1Size + v2Size;
   feedOblivIntArray(arr, io->input.arr, v1Size, 1);
   feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
-
+  double lap2 = wallClock();
+  fprintf(stderr,"starting gates\n");
 	for (int i=0; i<tSize-1; i++){ 
 		for (int j=0; j<tSize-1-i; j++) { 
 			obliv if (arr[j] > arr[j+1]){ 
@@ -34,7 +41,7 @@ void bubbleSort(void* args)
 			}
     }
   }
-
+  fprintf(stderr,"Gate exec time: %lf s\n",wallClock()-lap2);
   revealOblivIntArray(io->output.arr, arr, v1Size, 1);
   revealOblivIntArray(io->output.arr, arr+v1Size, v2Size, 2);
   fprintf(stderr,"YaoGateCount: %u\n",yaoGateCount());

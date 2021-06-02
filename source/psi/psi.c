@@ -60,10 +60,8 @@ int main(int argc, char** argv){
   execYaoProtocol(&pd, psi, &io);
   gettimeofday(&end, NULL);  
 
-  printf("time=%d ms\n",((end.tv_sec-start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec))/1000);  
-
   int* result = io.output.arr;
-  fprintf(stderr, "Median4: result = ");
+  fprintf(stderr, "Result = ");
   for (int i = 0; i < io.input.size; i++) {
     fprintf(stderr, "%d, ", result[i]);
   }

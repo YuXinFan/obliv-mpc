@@ -6,6 +6,7 @@
 #include<bcrandom.h>
 #include<obliv.oh>
 
+#include "psi.h"
 #include<waksman.h>
 #include<../common/util.h>
 
@@ -133,7 +134,7 @@ size_t qsortUniq(void* data,size_t n,size_t w,
 //   into the protocol.
 // In case oN is not big enough, the output is truncated
 // If the two parties have different oN values, the smaller one is used
-size_t privateSetIntersection(int *output,size_t oN,int *input,size_t iN)
+size_t psi(int *output,size_t oN,int *input,size_t iN)
 {
   size_t a,b;
   unsigned i;
@@ -202,31 +203,28 @@ void testSorter(void* arg)
   releaseBCipherRandomGen(gen);
 }
 
-void randomPsi(void* arg)
+void psiMain(void* arg)
 {
   // randomly select 69 random numbers from range [1..100]
   // On average, intersection of two such sets should be of about size 25
-  const int maxval=100;
+  protocolIO *io = args;
+  int v1Size = ocBroadcastInt(io->input.size, 1);
+  int v2Size = ocBroadcastInt(io->input.size, 2);
+  
+  obliv int* v = malloc(sizeof(obliv int) * (v1Size+v2Size));
+  obliv int* r = malloc(sizeof(obliv int) * (v1Size+v2Size));
+  
+  feedOblivIntArray(v, io->input.arr, v1Size, 1);
+  feedOblivIntArray(v+v1Size, io->input.arr, v2Size, 2);
   extern double lap;
-  const int n=69;
+  int n=v1Size+v2Size;
   int on;
-  int *arr=malloc(sizeof(int)*n), *res=malloc(sizeof(int)*n);
   fprintf(stderr,"Base OT time: %lf s\n",wallClock()-lap);
-  BCipherRandomGen *gen = newBCipherRandomGen();
-  unsigned i;
-  for(i=0;i<n;++i) 
-  { arr[i]=bcRandomInt(gen,maxval)+1;
-    // fprintf(stderr,"%d ",arr[i]);
-  }
-//  fprintf(stderr,"\n");
-  fprintf(stderr,"Done with random generation\n");
-  on=privateSetIntersection(res,n,arr,n);
+  on=psi(r,n,v,n);
+  fprintf(stderr,"Total gates: %u\n",yaoGateCount());
+
   /*
   for(i=0;i<on;++i) fprintf(stderr,"%d ",res[i]);
   fprintf(stderr,"\n");
   */
-  releaseBCipherRandomGen(gen);
-  free(arr);
-  free(res);
-  fprintf(stderr,"%u\n",yaoGateCount());
 }
