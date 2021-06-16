@@ -17,7 +17,7 @@ int main(int argc, char** argv){
   const char* remote_host = (strcmp(argv[2], "--")==0?NULL:argv[2]);
  // ocTestUtilTcpOrDie(&pd, remote_host, argv[1]);
   if(!remote_host){
-    if(protocolAcceptTcp2P(&pd, argv[1])){
+    if(protocolAcceptTcp2PProfiled(&pd, argv[1])){
       fprintf(stderr, "TCP accept failed\n");
       exit(1);
     }
@@ -47,21 +47,16 @@ int main(int argc, char** argv){
       return 2;
     }
   }
-  fprintf(stderr, "Exec Yao");
   io.input = v;
 
   vector r;
   r.size = v.size;
   r.arr = malloc(sizeof(int) * r.size);
   io.output = r;
-  
-  struct timeval start,end;  
-  gettimeofday(&start, NULL);  
+
   execYaoProtocol(&pd, bsort, &io);
-  gettimeofday(&end, NULL);  
-
-  printf("time=%d ms\n",((end.tv_sec-start.tv_sec)*1000000 + (end.tv_usec - start.tv_usec))/1000);  
-
+  fprintf(stderr, "CommunicationSend: %zu\n", tcp2PBytesSent(&pd));
+  fprintf(stderr, "CommunicationFlush: %zu\n", tcp2PFlushCount(&pd));
   int* result = io.output.arr;
   int sorted = 0;
   for (int i = 0; i < io.input.size; i++) {

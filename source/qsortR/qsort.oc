@@ -1,5 +1,13 @@
 #include <obliv.oh>
 #include "qsort.h"
+#include <time.h>
+
+double wallClock()
+{
+  struct timespec t;
+  clock_gettime(CLOCK_REALTIME,&t);
+  return t.tv_sec+1e-9*t.tv_nsec;
+}
 
 // void revealOblivIntArr(int* dest,size_t n,obliv int* src,int destParty)
 // {
@@ -56,8 +64,11 @@ void mpcQsort(void* args)
   feedOblivIntArray(arr, io->input.arr, v1Size, 1);
   feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
 
+  fprintf(stderr,"starting gates\n");
+  double lap2 = wallClock();
   qsortMain(arr, v1Size+v2Size);
-
+  fprintf(stderr,"Gates exec time: %lf s\n",wallClock()-lap2);
+  
   revealOblivIntArray(io->output.arr, arr, v1Size, 1);
   revealOblivIntArray(io->output.arr, arr+v1Size, v2Size, 2);
   fprintf(stderr,"YaoGateCount: %u\n",yaoGateCount());

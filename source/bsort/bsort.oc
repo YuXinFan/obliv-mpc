@@ -1,6 +1,13 @@
 #include <obliv.oh>
 #include "bsort.h"
+#include <time.h>
 
+double wallClock()
+{
+  struct timespec t;
+  clock_gettime(CLOCK_REALTIME,&t);
+  return t.tv_sec+1e-9*t.tv_nsec;
+}
 // ------------------ Batcher sorting -----------------------------------------
 void swapInt(obliv int* a,obliv int* b) obliv
 {
@@ -73,7 +80,10 @@ void bsort(void* args)
   feedOblivIntArray(arr, io->input.arr, v1Size, 1);
   feedOblivIntArray(arr+v1Size, io->input.arr, v2Size, 2);
 
+  fprintf(stderr,"starting gates\n");
+  double lap2 = wallClock();
   batcherSort(arr, v1Size+v2Size, 1);
+  fprintf(stderr,"Gates exec time: %lf s\n",wallClock()-lap2);
 
   revealOblivIntArray(io->output.arr, arr, v1Size, 1);
   revealOblivIntArray(io->output.arr, arr+v1Size, v2Size, 2);

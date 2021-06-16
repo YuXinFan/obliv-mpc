@@ -1,4 +1,4 @@
-testName=bsort
+testName=cancer
 CILPATH=~/mine/obliv-c
 REMOTE_HOST=localhost
 CFLAGS=-DREMOTE_HOST=$(REMOTE_HOST) -O3 

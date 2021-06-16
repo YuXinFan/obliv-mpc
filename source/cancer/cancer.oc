@@ -1,0 +1,92 @@
+#include <obliv.oh>
+#include "cancer.h"
+#include <time.h>
+
+double wallClock()
+{
+  struct timespec t;
+  clock_gettime(CLOCK_REALTIME,&t);
+  return t.tv_sec+1e-9*t.tv_nsec;
+}
+
+void cancer(obliv int UoCSize,
+                  obliv int UoCShape,
+                  obliv int BN,
+                  obliv int CT,
+                  obliv int BC,
+                  obliv int MA,
+                  obliv bool* benign){
+    if (UoCSize <= 2) {
+      obliv if (BN <= 3 ) {
+        *benign = true;
+      }else {
+        obliv if (CT <= 3 ) {
+          *benign = true;
+        }else {
+          obliv if ( BC <= 2) {
+            obliv if ( MA <= 3) {
+              *benign = false;
+            }else {
+              *benign = true;
+            }
+          }else {
+            *benign = false;
+          }
+        }
+      }
+    }else {
+      obliv if ( UoCShape  <= 2) {
+        obliv if  ( CT <= 5 ) {
+          *benign = true;
+        }else {
+          *benign = false;
+        }
+      }else {
+        obliv if (UoCSize <= 4) {
+          obliv if (BN <= 2) {
+            obliv if (MA <= 3){
+              *benign = true;
+            }else {
+              *benign = false;
+            }
+          }else {
+            obliv if (CT <= 6) {
+              obliv if (UoCSize <= 3) {
+                *benign = false;
+              }else {
+                obliv if (MA <= 5) {
+                  *benign = true;
+                }else {
+                  *benign = false;
+                }
+              }
+            }else {
+              *benign = false;
+            }
+          }
+        }else {
+          *benign = false;
+        }
+      }
+    }
+}
+
+void analyze(void* args)
+{
+  protocolIO *io = args;
+
+  obliv int UoCSize = feedOblivInt(io->UniformityofCellSize, 1);
+  obliv int UoCShape = feedOblivInt(io->UniformityofCellShape, 1);
+  obliv int BN = feedOblivInt(io->BareNuclei, 1);
+  obliv int CT= feedOblivInt(io->ClumpThickness, 1);
+  obliv int BC= feedOblivInt(io->BlandChromatin, 1);
+  obliv int MA= feedOblivInt(io->MarginalAdhesion, 1);
+  obliv bool be = feedOblivBool(io->benign, 1);
+
+  fprintf(stderr,"starting gates\n");
+  double lap2 = wallClock();
+  cancer(UoCSize,UoCShape,BN,CT,BC,MA, &be);
+  fprintf(stderr,"Gates exec time: %lf s\n",wallClock()-lap2);
+  
+  fprintf(stderr,"YaoGateCount: %u\n",yaoGateCount());
+}

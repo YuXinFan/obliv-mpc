@@ -2,7 +2,7 @@
 #include <sys/time.h>
 #include <obliv.h>
 
-#include "qsort.h"
+#include "cancer.h"
 
 int main(int argc, char** argv){
 
@@ -31,46 +31,22 @@ int main(int argc, char** argv){
 
   int currentParty = remote_host?2:1;
   setCurrentParty(&pd, currentParty); 
-
-  vector v;
-  FILE* file = fopen(argv[3], "r");
-  if(fscanf(file, "%d\n", &(v.size)) == EOF){
-    fprintf(stderr, "Invalid input file\n");
-    return 2;
+  
+  if (currentParty == 1) {
+    io.UniformityofCellSize = 3;
+    io.UniformityofCellShape = 3;
+    io.BareNuclei = 3;
+    io.BlandChromatin = 3;
+    io.SingleEpithelialCellSize = 3;
+    io.ClumpThickness = 3;
+    io.NormalNucleoli = 3;
+    io.MarginalAdhesion = 3;
+    io.Mitoses = 3;
   }
   
-
-  v.arr = malloc(sizeof(int) * v.size);
-
-  for(int i=0; i<v.size; i++){
-    if(fscanf(file, "%d\n", &(v.arr[i])) == EOF){
-      return 2;
-    }
-  }
-
-  io.input = v;
-
-  vector r;
-  r.size = v.size;
-  r.arr = malloc(sizeof(int) * r.size);
-  io.output = r;
-  
-  execYaoProtocol(&pd, mpcQsort, &io); 
+  execYaoProtocol(&pd, analyze, &io); 
   fprintf(stderr, "CommunicationSend: %zu\n", tcp2PBytesSent(&pd));
   fprintf(stderr, "CommunicationFlush: %zu\n", tcp2PFlushCount(&pd));
-
-  int* result = io.output.arr;
-  int sorted = 0;
-  for (int i = 0; i < io.input.size; i++) {
-    if (sorted <= result[i]) {
-      sorted = result[i];
-    } else {
-      fprintf(stderr, "Unsorted!");
-      break;
-    }
-  }
-  fprintf(stderr, "\n");
-
 
   cleanupProtocol(&pd);
   return 0;

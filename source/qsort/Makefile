@@ -1,5 +1,5 @@
 testName=qsort
-CILPATH=/root/obliv-c
+CILPATH=~/mine/obliv-c
 REMOTE_HOST=localhost
 CFLAGS=-DREMOTE_HOST=$(REMOTE_HOST) -O3 
 ./a.out: $(testName).oc $(testName).c $(CILPATH)/_build/libobliv.a
