@@ -64,4 +64,18 @@ file. Rerun `make` to rebuild. The `Makefiles` included in our examples are
 generic enough to be used for other examples; copy to your directory and change
 the `testName` variable.
 
+ ## Local installation
+ - install obliv-c
+ ```bash
+sudo apt-get install ocaml libgcrypt20-dev ocaml-findlib opam m4
+ 
+opam init
+opam switch 4.06.0
+eval `opam config env`
+opam install camlp4 ocamlfind ocamlbuild batteries
+ 
+./configure && make
+ ```
+ 
+ ```
 
