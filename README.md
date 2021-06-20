@@ -76,8 +76,16 @@ opam install camlp4 ocamlfind ocamlbuild batteries
  
 ./configure && make
  ```
- ## benchmark
+ ## Benchmark
   - mpc quick sort (modified on naive impl)
   - mpc stable matching (modified on Gale-Shapley impl)
   - mpc binary search (modified on native impl)
 
+ ## Measurement
+  - execution time (measurable)
+  - the number of circuit gates (measurable)
+  - communication bytes (measurable)
+ ## Comparable
+  - mpc_batcher_sort vs mpc_qsort (revealed version)
+  - mpc_stable_matching vs mpc_stable_matching (revealed version)
+  - mpc_binary_search vs mpc_binary_search (revealed version)
